@@ -1,10 +1,13 @@
-'''This is A React-Timer App
+### This is A React-Timer App
 
 Tech Stack
 
 NEXTJS 14 - App Router
 TailwindCSS
 TypeScript
+
+Auth and Database
+Supabase
 
 ## Getting Started
 
