@@ -26,9 +26,7 @@ export default function Trackapp() {
         </div>
 
         <div className="flex flex-col gap-4">
-          {tracks.map((track, i) => {
-            return <Daytrack key={i} track={track} />;
-          })}
+          <Daytrack tracks={tracks} />;
         </div>
       </div>
     </>
