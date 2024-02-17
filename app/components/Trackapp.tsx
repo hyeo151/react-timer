@@ -12,9 +12,13 @@ type track = {
 
 export default function Trackapp() {
   const [tracks, setTracks] = useState<track[]>([]);
+
+  const handleNewTrack = (newTrack) => {
+    setTracks([...tracks, newTrack]);
+  };
   return (
     <>
-      <Newtrack />
+      <Newtrack handleNewTrack={handleNewTrack} />
       <div className="mt-10">
         <div className="flex justify-between mb-5">
           <p>Last Week</p>
@@ -22,9 +26,9 @@ export default function Trackapp() {
         </div>
 
         <div className="flex flex-col gap-4">
-          <Daytrack />
-          <Daytrack />
-          <Daytrack />
+          {tracks.map((track, i) => {
+            return <Daytrack key={i} track={track} />;
+          })}
         </div>
       </div>
     </>

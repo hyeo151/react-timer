@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
 
-type StopwatchProps = {
-  time: number;
-  isRunning: boolean;
-  setTime: (time: number) => void;
-};
-
-export default function Stopwatch({
-  time,
-  isRunning,
-  setTime,
-}: StopwatchProps) {
+export default function Stopwatch({ time, isRunning, handleTimer }) {
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
+
     if (isRunning) {
-      intervalId = setInterval(() => setTime(time + 1), 1000);
+      intervalId = setInterval(() => handleTimer(time + 1), 1000);
     }
     return () => clearInterval(intervalId);
   }, [isRunning, time]);
@@ -28,18 +19,6 @@ export default function Stopwatch({
   // Seconds calculation
   const seconds = Math.floor(time % 60);
 
-  // Milliseconds calculation
-  //   const milliseconds = time % 100;
-
-  // Method to start and stop timer
-  //   const startAndStop = () => {
-  //     setIsRunning(!isRunning);
-  //   };
-
-  // Method to reset timer back to 0
-  //   const reset = () => {
-  //     setTime(0);
-  //   };
   return (
     <div className="stopwatch-container">
       <p className="stopwatch-time">
