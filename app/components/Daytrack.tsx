@@ -1,8 +1,13 @@
 "use client";
 
 import Box from "./Box";
+import { track } from "./Trackapp";
 
-export default function Daytrack({ track }) {
+interface DaytrackProps {
+  track: track;
+}
+
+export default function Daytrack({ track }: DaytrackProps) {
   const { description, project, duration } = track;
 
   // Hours calculation

@@ -4,7 +4,7 @@ import Newtrack from "./Newtrack";
 import Daytrack from "./Daytrack";
 import { useState } from "react";
 
-type track = {
+export type track = {
   description: string;
   project: string;
   duration: number;
@@ -13,7 +13,7 @@ type track = {
 export default function Trackapp() {
   const [tracks, setTracks] = useState<track[]>([]);
 
-  const handleNewTrack = (newTrack) => {
+  const handleNewTrack = (newTrack: track) => {
     setTracks([...tracks, newTrack]);
   };
   return (

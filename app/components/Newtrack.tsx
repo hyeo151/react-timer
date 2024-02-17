@@ -4,8 +4,13 @@ import { MdEditNote, MdOutlineTimer } from "react-icons/md";
 import Box from "./Box";
 import Stopwatch from "./Stopwatch";
 import { useState } from "react";
+import { track } from "./Trackapp";
 
-export default function Newtrack({ handleNewTrack }) {
+interface NewtrackProps {
+  handleNewTrack: (newTrack: track) => void;
+}
+
+export default function Newtrack({ handleNewTrack }: NewtrackProps) {
   const [projectDescription, setProjectDescription] = useState("");
   const [project, setProject] = useState("Project Example 1");
   const [time, setTime] = useState(0);
@@ -24,7 +29,7 @@ export default function Newtrack({ handleNewTrack }) {
     }
   };
 
-  const handleTimer = (newTime) => {
+  const handleTimer = (newTime: number) => {
     setTime(newTime);
   };
 

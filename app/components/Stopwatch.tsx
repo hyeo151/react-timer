@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from "react";
 
-export default function Stopwatch({ time, isRunning, handleTimer }) {
+interface StopwatchProps {
+  time: number;
+  isRunning: boolean;
+  handleTimer: (time: number) => void;
+}
+
+export default function Stopwatch({
+  time,
+  isRunning,
+  handleTimer,
+}: StopwatchProps) {
   useEffect(() => {
     let intervalId: ReturnType<typeof setInterval>;
 
