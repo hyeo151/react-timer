@@ -5,6 +5,7 @@ import Box from "./Box";
 import Stopwatch from "./Stopwatch";
 import { useState } from "react";
 import { track } from "./Trackapp";
+import moment from "moment";
 
 interface NewtrackProps {
   handleNewTrack: (newTrack: track) => void;
@@ -24,6 +25,7 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
       handleNewTrack({
         description: projectDescription,
         project: project,
+        date: moment().format("DD/MM/YYYY").toString(),
         duration: time,
       });
     }
