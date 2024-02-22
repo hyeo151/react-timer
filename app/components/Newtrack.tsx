@@ -23,9 +23,10 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
       setProjectDescription("");
       setTime(0);
       handleNewTrack({
+        id: 1,
         description: projectDescription,
         project: project,
-        date: moment().format("DD/MM/YYYY").toString(),
+        created_at: moment().format("DD/MM/YYYY").toString(),
         duration: time,
       });
     }

@@ -3,41 +3,67 @@
 import Newtrack from "./Newtrack";
 import Daytrack from "./Daytrack";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import moment from "moment";
+import { createBrowserClient } from "@supabase/ssr";
+
+function createClient() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
 
 export type track = {
+  id: number;
   description: string;
   project: string;
-  date: string;
+  created_at: string;
   duration: number;
 };
 
 export default function Trackapp() {
   const [tracks, setTracks] = useState<track[]>([]);
+  const supabase = createClient();
 
-  const handleNewTrack = (newTrack: track) => {
-    setTracks([...tracks, newTrack]);
-    axios.post("http://localhost:8000/tracks", {
+  const insertDataSupabase = async (newTrack: track) => {
+    console.log("inserting data");
+    const { error } = await supabase.from("tracks").insert({
       description: newTrack.description,
       project: "Project 1",
-      date: newTrack.date,
       duration: newTrack.duration,
     });
+
+    if (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchDataSupabase = async () => {
+    console.log("fetching data");
+    const { data: tracks } = await supabase.from("tracks").select();
+    if (!tracks) {
+      return;
+    }
+    setTracks(tracks);
+  };
+
+  const handleNewTrack = (newTrack: track) => {
+    insertDataSupabase(newTrack);
+    fetchDataSupabase();
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      const data = await axios
-        .get("http://localhost:8000/tracks")
-        .then((res) => res.data);
-      setTracks(data);
+    const fetchDataSupabase = async () => {
+      const { data: tracks } = await supabase.from("tracks").select();
+      if (!tracks) {
+        return;
+      }
+      setTracks(tracks);
     };
-    fetchData();
+    fetchDataSupabase();
   }, []);
 
   const groupedTracks = tracks.reduce((acc, track) => {
-    const date = track.date;
+    const date = track.created_at.slice(0, 10);
     if (!acc[date]) {
       acc[date] = [];
     }

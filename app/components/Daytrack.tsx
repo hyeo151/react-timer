@@ -9,12 +9,28 @@ interface DaytrackProps {
 }
 
 export default function Daytrack({ tracks, date }: DaytrackProps) {
+  const totalDayDuration = tracks.reduce(
+    (accumulator, currentValue) => accumulator + currentValue.duration,
+    0
+  );
   return (
     <div>
       <Box className="bg-slate-400">
         <div className="flex justify-between">
           <p>{date}</p>
-          <p>Day Total Time</p>
+          <p>
+            {Math.floor(totalDayDuration / 3600)
+              .toString()
+              .padStart(2, "0")}
+            :
+            {Math.floor((totalDayDuration % 3600) / 60)
+              .toString()
+              .padStart(2, "0")}
+            :
+            {Math.floor(totalDayDuration % 60)
+              .toString()
+              .padStart(2, "0")}
+          </p>
         </div>
       </Box>
       {tracks.map((track, i) => {
@@ -43,7 +59,8 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
                 readOnly
               />
               <div className="inline-block bg-white p-1 px-2">
-                {hours}:{minutes.toString().padStart(2, "0")}:
+                {hours.toString().padStart(2, "0")}:
+                {minutes.toString().padStart(2, "0")}:
                 {seconds.toString().padStart(2, "0")}
               </div>
               <button className="bg-white hover:bg-neutral-300 p-1 px-2 h-full">
