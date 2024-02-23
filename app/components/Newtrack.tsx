@@ -4,7 +4,7 @@ import { MdEditNote, MdOutlineTimer } from "react-icons/md";
 import Box from "./Box";
 import Stopwatch from "./Stopwatch";
 import { useState } from "react";
-import { track } from "./Trackapp";
+import { track } from "../types/type";
 import moment from "moment";
 
 interface NewtrackProps {

@@ -1,7 +1,7 @@
 "use client";
 
 import Box from "./Box";
-import { track } from "./Trackapp";
+import { track } from "../types/type";
 
 interface DaytrackProps {
   tracks: track[];
