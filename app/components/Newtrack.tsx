@@ -3,9 +3,10 @@
 import { MdEditNote, MdOutlineTimer } from "react-icons/md";
 import Box from "./Box";
 import Stopwatch from "./Stopwatch";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { track } from "../types/type";
 import moment from "moment";
+import { format } from "date-fns";
 
 interface NewtrackProps {
   handleNewTrack: (newTrack: track) => void;
@@ -17,17 +18,27 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
 
+  let startDateTime_ref = useRef<Date>(new Date());
+  let endDateTime_ref = useRef<Date>(new Date());
+
   const handleTimerButton = () => {
+    if (!isRunning) {
+      startDateTime_ref.current = new Date();
+      // console.log("setting startDateTime", startDateTime_ref);
+    }
     setIsRunning(!isRunning);
     if (projectDescription && isRunning) {
+      endDateTime_ref.current = new Date();
+
       setProjectDescription("");
       setTime(0);
+
+      // console.log(startDateTime_ref, endDateTime_ref);
       handleNewTrack({
-        id: 1,
         description: projectDescription,
         project: project,
-        created_at: moment().format("DD/MM/YYYY").toString(),
-        duration: time,
+        start_date_time: startDateTime_ref.current,
+        end_date_time: endDateTime_ref.current,
       });
     }
   };

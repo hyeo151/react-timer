@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { createClient } from "../utils/supabase";
 import { track } from "../types/type";
 import moment from "moment";
+import { format, lastDayOfWeek, startOfWeek } from "date-fns";
+const { differenceInSeconds } = require("date-fns");
 
 export default function Trackapp() {
   const [tracks, setTracks] = useState<track[]>([]);
@@ -16,8 +18,9 @@ export default function Trackapp() {
       .from("tracks")
       .insert({
         description: newTrack.description,
-        project: "Project 1",
-        duration: newTrack.duration,
+        project: newTrack.project,
+        start_date_time: newTrack.start_date_time,
+        end_date_time: newTrack.end_date_time,
       })
       .select();
     if (error) {
@@ -50,53 +53,85 @@ export default function Trackapp() {
   }, []);
 
   const groupedDayTracks = tracks.reduce((acc, track) => {
-    const date = track.created_at.slice(0, 10);
-    if (!acc[date]) {
-      acc[date] = [];
+    const startDateOfWeek = format(
+      startOfWeek(track.start_date_time, {
+        weekStartsOn: 1,
+      }),
+      "MM/dd/yyyy"
+    );
+    const endDateOfWeek = format(
+      lastDayOfWeek(track.start_date_time, {
+        weekStartsOn: 1,
+      }),
+      "MM/dd/yyyy"
+    );
+
+    const weekString = startDateOfWeek + "-" + endDateOfWeek;
+
+    const trackDate = format(track.start_date_time, "MM/dd/yyyy");
+
+    if (!acc[weekString]) {
+      acc[weekString] = {};
     }
-    acc[date].push(track);
+    if (!acc[weekString][trackDate]) {
+      acc[weekString][trackDate] = [];
+    }
+    acc[weekString][trackDate].push(track);
     return acc;
-  }, {} as { [date: string]: track[] });
+  }, {} as { [week: string]: { [date: string]: track[] } });
 
-  const groupedWeekTracks = Object.entries(groupedDayTracks).reduce(
-    (acc, dayTrack) => {
-      const yearWeek = `${moment(dayTrack[0]).year()}-${moment(
-        dayTrack[0]
-      ).week()}`;
-
-      if (!acc[yearWeek]) {
-        acc[yearWeek] = [];
-      }
-      acc[yearWeek].push(dayTrack[1]);
-      return acc;
-    },
-    {} as { [key: string]: [track[]?] }
-  );
   return (
     <>
       <Newtrack handleNewTrack={handleNewTrack} />
       <div className="mt-10">
-        {/* {Object.entries(groupedWeekTracks).map(([weeklyKey, weeklyValues]) => (
-          <div>
-            {weeklyKey}
-            {weeklyValues.map((dailyTracks) => {
-              console.log("dailyTracks");
-              console.log(dailyTracks);
-              return <Daytrack tracks={tracks} date={weeklyKey} />;
-            })}
-          </div>
-        ))} */}
+        {Object.entries(groupedDayTracks).map(([key, values]) => {
+          const weekDurationArray = Object.values(values).map((dayTracks) => {
+            const totalDayDuration = dayTracks.reduce(
+              (accumulator, currentValue) =>
+                accumulator +
+                differenceInSeconds(
+                  currentValue.end_date_time,
+                  currentValue.start_date_time
+                ),
+              0
+            );
+            return totalDayDuration;
+          });
+          const weekDurationSum = weekDurationArray.reduce((a, b) => a + b, 0);
+          return (
+            <div key={key}>
+              <div className="flex justify-between mb-5 mt-5">
+                <p>{key}</p>
+                <p>
+                  Week Total:{" "}
+                  {Math.floor(weekDurationSum / 3600)
+                    .toString()
+                    .padStart(2, "0")}
+                  :
+                  {Math.floor((weekDurationSum % 3600) / 60)
+                    .toString()
+                    .padStart(2, "0")}
+                  :
+                  {Math.floor(weekDurationSum % 60)
+                    .toString()
+                    .padStart(2, "0")}
+                </p>
+              </div>
 
-        <div className="flex justify-between mb-5">
-          <p>Last Week</p>
-          <p>Week Total: Number</p>
-        </div>
-
-        <div className="flex flex-col gap-4">
-          {Object.entries(groupedDayTracks).map(([date, tracks]) => {
-            return <Daytrack key={date} tracks={tracks} date={date} />;
-          })}
-        </div>
+              {Object.entries(values).map(([trackKey, trackValues]) => {
+                return (
+                  <div key={trackKey} className="flex flex-col gap-4">
+                    <Daytrack
+                      key={trackKey}
+                      tracks={trackValues}
+                      date={trackKey}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
     </>
   );

@@ -1,7 +1,8 @@
 export type track = {
-  id: number;
+  id?: string;
   description: string;
+  created_at?: Date;
   project: string;
-  created_at: string;
-  duration: number;
+  start_date_time: Date;
+  end_date_time: Date;
 };

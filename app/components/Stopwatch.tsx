@@ -30,9 +30,10 @@ export default function Stopwatch({
   const seconds = Math.floor(time % 60);
 
   return (
-    <div className="stopwatch-container">
-      <p className="stopwatch-time">
-        {hours}:{minutes.toString().padStart(2, "0")}:
+    <div>
+      <p>
+        {hours.toString().padStart(2, "0")}:
+        {minutes.toString().padStart(2, "0")}:
         {seconds.toString().padStart(2, "0")}
       </p>
     </div>

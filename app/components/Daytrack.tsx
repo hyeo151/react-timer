@@ -2,6 +2,8 @@
 
 import Box from "./Box";
 import { track } from "../types/type";
+import { format } from "date-fns";
+const { differenceInSeconds } = require("date-fns");
 
 interface DaytrackProps {
   tracks: track[];
@@ -10,7 +12,12 @@ interface DaytrackProps {
 
 export default function Daytrack({ tracks, date }: DaytrackProps) {
   const totalDayDuration = tracks.reduce(
-    (accumulator, currentValue) => accumulator + currentValue.duration,
+    (accumulator, currentValue) =>
+      accumulator +
+      differenceInSeconds(
+        currentValue.end_date_time,
+        currentValue.start_date_time
+      ),
     0
   );
   return (
@@ -34,14 +41,18 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
         </div>
       </Box>
       {tracks.map((track, i) => {
+        const duration = differenceInSeconds(
+          track.end_date_time,
+          track.start_date_time
+        );
         // Hours calculation
-        const hours = Math.floor(track.duration / 3600);
+        const hours = Math.floor(duration / 3600);
 
         // Minutes calculation
-        const minutes = Math.floor((track.duration % 3600) / 60);
+        const minutes = Math.floor((duration % 3600) / 60);
 
         // Seconds calculation
-        const seconds = Math.floor(track.duration % 60);
+        const seconds = Math.floor(duration % 60);
         return (
           <Box key={i}>
             <div className="flex gap-2 items-center">
@@ -58,6 +69,10 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
                 value={track.project}
                 readOnly
               />
+              <div className="inline-block bg-white p-1 px-2">
+                {format(track.start_date_time, "HH:mm")} -
+                {format(track.end_date_time, "HH:mm")}
+              </div>
               <div className="inline-block bg-white p-1 px-2">
                 {hours.toString().padStart(2, "0")}:
                 {minutes.toString().padStart(2, "0")}:
