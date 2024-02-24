@@ -3,6 +3,7 @@
 import Box from "./Box";
 import { track } from "../types/type";
 import { format } from "date-fns";
+import Tasktrack from "./Tasktrack";
 const { differenceInSeconds } = require("date-fns");
 
 interface DaytrackProps {
@@ -20,6 +21,16 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
       ),
     0
   );
+
+  const taskTracksGroup = tracks.reduce((acc, track) => {
+    const keyString = track.description + "-" + track.project;
+    if (!acc[keyString]) {
+      acc[keyString] = [];
+    }
+    acc[keyString].push(track);
+    return acc;
+  }, {} as { [task: string]: track[] });
+
   return (
     <div>
       <Box className="bg-slate-400">
@@ -40,7 +51,10 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
           </p>
         </div>
       </Box>
-      {tracks.map((track, i) => {
+      {Object.entries(taskTracksGroup).map(([taskDescription, taskTracks]) => {
+        return <Tasktrack key={taskDescription} tracks={taskTracks} />;
+      })}
+      {/* {tracks.map((track, i) => {
         const duration = differenceInSeconds(
           track.end_date_time,
           track.start_date_time
@@ -84,7 +98,7 @@ export default function Daytrack({ tracks, date }: DaytrackProps) {
             </div>
           </Box>
         );
-      })}
+      })} */}
     </div>
   );
 }

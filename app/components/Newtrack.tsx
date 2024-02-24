@@ -66,9 +66,9 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
           value={project}
           onChange={(e) => setProject(e.target.value)}
         >
-          <option value="Project Example 1">Project 1</option>
-          <option value="Project Example 2">Project 2</option>
-          <option value="Project Example 3">Project 3</option>
+          <option value="Project 1">Project 1</option>
+          <option value="Project 2">Project 2</option>
+          <option value="Project 3">Project 3</option>
         </select>
         <div className="inline-block bg-white p-1 px-2">
           <Stopwatch
