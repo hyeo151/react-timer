@@ -140,7 +140,7 @@ export default function Tasktrack({ tracks }: TasktrackProps) {
       {trackElement}
       {!isCollapsed &&
         tracks.length > 1 &&
-        tracks.map((track) => {
+        tracks.map((track, index) => {
           const duration = differenceInSeconds(
             track.end_date_time,
             track.start_date_time
@@ -154,7 +154,7 @@ export default function Tasktrack({ tracks }: TasktrackProps) {
           // Seconds calculation
           const seconds = Math.floor(duration % 60);
           return (
-            <Box className="bg-slate-200">
+            <Box key={index} className="bg-slate-200">
               <div className="flex gap-2 items-center">
                 <input
                   type="text"
