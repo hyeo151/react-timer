@@ -9,7 +9,7 @@ type BoxProps = {
 export default function Box({ children, className }: BoxProps) {
   return (
     <div
-      className={`${twMerge("bg-slate-200 rounded-sm py-2 px-3", className)}`}
+      className={`${twMerge("bg-slate-300 rounded-sm py-2 px-3", className)}`}
     >
       {children}
     </div>
