@@ -5,8 +5,7 @@ import Box from "./Box";
 import Stopwatch from "./Stopwatch";
 import { useRef, useState } from "react";
 import { track } from "../types/type";
-import moment from "moment";
-import { format } from "date-fns";
+import { createClient } from "../utils/supabase";
 
 interface NewtrackProps {
   handleNewTrack: (newTrack: track) => void;
@@ -21,10 +20,28 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
   let startDateTime_ref = useRef<Date>(new Date());
   let endDateTime_ref = useRef<Date>(new Date());
 
-  const handleTimerButton = () => {
+  const supabase = createClient();
+
+  const insertStartTimeSupabase = async (newTrack: any) => {
+    const { data, error } = await supabase
+      .from("tracks")
+      .insert({
+        start_date_time: newTrack.start_date_time,
+      })
+      .select();
+    if (error) {
+      console.log(error);
+      return;
+    }
+    return data[0];
+  };
+
+  const handleTimerButton = async () => {
     if (!isRunning) {
       startDateTime_ref.current = new Date();
-      // console.log("setting startDateTime", startDateTime_ref);
+      const { id } = await insertStartTimeSupabase({
+        start_date_time: startDateTime_ref.current,
+      });
     }
     setIsRunning(!isRunning);
     if (projectDescription && isRunning) {
@@ -33,7 +50,6 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
       setProjectDescription("");
       setTime(0);
 
-      // console.log(startDateTime_ref, endDateTime_ref);
       handleNewTrack({
         description: projectDescription,
         project: project,
@@ -72,6 +88,7 @@ export default function Newtrack({ handleNewTrack }: NewtrackProps) {
         </select>
         <div className="inline-block bg-white p-1 px-2">
           <Stopwatch
+            startTime={startDateTime_ref.current}
             time={time}
             isRunning={isRunning}
             handleTimer={handleTimer}

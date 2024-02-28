@@ -5,9 +5,8 @@ import Daytrack from "./Daytrack";
 import { useEffect, useState } from "react";
 import { createClient } from "../utils/supabase";
 import { track } from "../types/type";
-import moment from "moment";
 import { format, lastDayOfWeek, startOfWeek } from "date-fns";
-const { differenceInSeconds } = require("date-fns");
+import { differenceInSeconds } from "date-fns";
 
 export default function Trackapp() {
   const [tracks, setTracks] = useState<track[]>([]);
@@ -30,7 +29,7 @@ export default function Trackapp() {
     return data[0];
   };
 
-  const handleNewTrack = async (newTrack: track) => {
+  const handleNewTrack = async (newTrack: any) => {
     const data = await insertDataSupabase(newTrack);
     if (data) {
       setTracks([...tracks, data]);
